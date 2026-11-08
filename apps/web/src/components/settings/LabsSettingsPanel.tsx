@@ -1,3 +1,4 @@
+import { useAtomValue } from "@effect/atom-react";
 import { useAuth } from "@clerk/react";
 import { Link } from "@tanstack/react-router";
 import { managedCapabilityDenial } from "@t3tools/contracts";
@@ -5,6 +6,8 @@ import { ToolCallVisibility } from "@t3tools/contracts/settings";
 import * as Schema from "effect/Schema";
 
 import { hasCloudPublicConfig } from "~/cloud/publicConfig";
+import { isElectron } from "~/env";
+import { relayEnvironmentDiscovery } from "~/state/relay";
 import { useT3ConnectAuthPrompt } from "../clerk/useT3ConnectAuthPrompt";
 import { Button } from "../ui/button";
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "../ui/select";
@@ -28,6 +31,8 @@ export function LabsSettingsPanel() {
         {/* Clerk is only mounted when this build has T3 Connect. */}
         {hasCloudPublicConfig() ? <GuestLinksRowWithSignIn /> : <GuestLinksRow />}
         <LinkedEnvironmentsRow />
+        {/* Only the desktop app links a machine from Settings; elsewhere use `t3 connect --beta`. */}
+        {isElectron && hasCloudPublicConfig() ? <ConnectBetaGatewayRow /> : null}
         <SimlockHostsRow />
       </SettingsSection>
       <LegacyFeaturesSection />
@@ -202,6 +207,41 @@ function LinkedEnvironmentsRow() {
             updateSettings({ linkedEnvironmentsEnabled: Boolean(checked) })
           }
           aria-label="Linked environments"
+        />
+      }
+    />
+  );
+}
+
+function ConnectBetaGatewayRow() {
+  const settings = useScopedSettings();
+  const updateSettings = useUpdateScopedSettings();
+  const linkLimit = useAtomValue(relayEnvironmentDiscovery.stateValueAtom).betaGatewayLinkLimit;
+  // Stays visible while on, so a relay that stops offering the beta cannot hide the way out.
+  if (linkLimit === undefined && !settings.connectBetaGatewayEnabled) return null;
+  return (
+    <SettingsRow
+      serverScoped
+      {...searchableSetting("t3-connect-unlimited")}
+      settingKeys={["connectBetaGatewayEnabled"]}
+      description={
+        <>
+          Link through T3&apos;s own gateway instead of a Cloudflare tunnel, free for up to{" "}
+          {linkLimit ?? 100} machines. Applies when you next turn on T3 Connect in{" "}
+          <Link to="/settings/access" className="underline underline-offset-2">
+            Sharing & access
+          </Link>
+          .
+        </>
+      }
+      control={
+        <ScopedSwitch
+          settingKeys={["connectBetaGatewayEnabled"]}
+          checked={settings.connectBetaGatewayEnabled}
+          onCheckedChange={(checked) =>
+            updateSettings({ connectBetaGatewayEnabled: Boolean(checked) })
+          }
+          aria-label="T3 Connect Unlimited (beta)"
         />
       }
     />
