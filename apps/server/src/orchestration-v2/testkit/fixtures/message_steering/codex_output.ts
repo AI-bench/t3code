@@ -21,6 +21,14 @@ export function assertMessageSteeringOutput(
   transcript: ProviderReplayTranscript,
 ) {
   assert.equal(transcript.provider, "codex");
+  assertInStreamMessageSteeringOutput(result, transcript);
+}
+
+/** Shared shape for providers that steer within the active turn (no restart). */
+export function assertInStreamMessageSteeringOutput(
+  result: OrchestratorV2ScenarioResult,
+  transcript: ProviderReplayTranscript,
+) {
   assertBaseProjection({ result, transcript, runCount: 1, runStatuses: ["completed"] });
 
   const projection = projectionFor(result, transcript.scenario);

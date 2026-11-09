@@ -72,6 +72,7 @@ import { grokSubagentLineageInput } from "./grok_subagent_lineage/input.ts";
 import { assertGrokSubagentLineageOutput } from "./grok_subagent_lineage/output.ts";
 import { assertClaudeMessageSteeringOutput } from "./message_steering/claude_output.ts";
 import { assertMessageSteeringOutput } from "./message_steering/codex_output.ts";
+import { assertZcodeMessageSteeringOutput } from "./message_steering/zcode_output.ts";
 import { assertCursorMessageSteeringOutput } from "./message_steering/cursor_output.ts";
 import { assertGrokMessageSteeringOutput } from "./message_steering/grok_output.ts";
 import { messageSteeringInput } from "./message_steering/input.ts";
@@ -92,6 +93,7 @@ import { assertPiCompactionOutput } from "./pi_compaction/output.ts";
 import { providerThreadResumeInput } from "./provider_thread_resume/input.ts";
 import { assertKiroProviderThreadResumeOutput } from "./provider_thread_resume/kiro_output.ts";
 import { assertPiProviderThreadResumeOutput } from "./provider_thread_resume/pi_output.ts";
+import { assertZcodeProviderThreadResumeOutput } from "./provider_thread_resume/zcode_output.ts";
 import { assertMultiTurnClaudeOutput } from "./multi_turn/claude_output.ts";
 import { assertMultiTurnOutput } from "./multi_turn/codex_output.ts";
 import { assertPiMultiTurnOutput } from "./multi_turn/pi_output.ts";
@@ -252,6 +254,7 @@ import {
   OPENCODE_MODEL_SELECTION,
   OPENCODE2_MODEL_SELECTION,
   PI_MODEL_SELECTION,
+  ZCODE_MODEL_SELECTION,
   READ_ONLY_NEVER_POLICY,
   READ_ONLY_ON_REQUEST_POLICY,
   RESTRICTED_GRANULAR_POLICY,
@@ -844,6 +847,12 @@ export const ORCHESTRATOR_REPLAY_FIXTURES: ReadonlyArray<OrchestratorReplayFixtu
         driver: ProviderDriverKind.make("kiro"),
         transcriptFile: new URL("./simple/kiro_transcript.ndjson", import.meta.url),
         modelSelection: KIRO_MODEL_SELECTION,
+        assertOutput: assertSimpleOutput,
+      },
+      {
+        driver: ProviderDriverKind.make("zcode"),
+        transcriptFile: new URL("./simple/zcode_transcript.ndjson", import.meta.url),
+        modelSelection: ZCODE_MODEL_SELECTION,
         assertOutput: assertSimpleOutput,
       },
       {
@@ -1507,6 +1516,12 @@ export const ORCHESTRATOR_REPLAY_FIXTURES: ReadonlyArray<OrchestratorReplayFixtu
         modelSelection: MUSE_MODEL_SELECTION,
         assertOutput: assertMuseMultiTurnOutput,
       },
+      {
+        driver: ProviderDriverKind.make("zcode"),
+        transcriptFile: new URL("./multi_turn/zcode_transcript.ndjson", import.meta.url),
+        modelSelection: ZCODE_MODEL_SELECTION,
+        assertOutput: assertMultiTurnOutput,
+      },
     ],
   },
   {
@@ -1590,6 +1605,15 @@ export const ORCHESTRATOR_REPLAY_FIXTURES: ReadonlyArray<OrchestratorReplayFixtu
         modelSelection: KIRO_MODEL_SELECTION,
         assertOutput: assertKiroProviderThreadResumeOutput,
       },
+      {
+        driver: ProviderDriverKind.make("zcode"),
+        transcriptFile: new URL(
+          "./provider_thread_resume/zcode_transcript.ndjson",
+          import.meta.url,
+        ),
+        modelSelection: ZCODE_MODEL_SELECTION,
+        assertOutput: assertZcodeProviderThreadResumeOutput,
+      },
     ],
   },
   {
@@ -1662,6 +1686,12 @@ export const ORCHESTRATOR_REPLAY_FIXTURES: ReadonlyArray<OrchestratorReplayFixtu
         driver: ProviderDriverKind.make("acpRegistry"),
         transcriptFile: new URL("./queued_turn/registry_transcript.ndjson", import.meta.url),
         modelSelection: ACP_REGISTRY_MODEL_SELECTION,
+        assertOutput: assertQueuedTurnOutput,
+      },
+      {
+        driver: ProviderDriverKind.make("zcode"),
+        transcriptFile: new URL("./queued_turn/zcode_transcript.ndjson", import.meta.url),
+        modelSelection: ZCODE_MODEL_SELECTION,
         assertOutput: assertQueuedTurnOutput,
       },
     ],
@@ -1809,6 +1839,12 @@ export const ORCHESTRATOR_REPLAY_FIXTURES: ReadonlyArray<OrchestratorReplayFixtu
         modelSelection: PI_MODEL_SELECTION,
         assertOutput: assertPiMessageSteeringOutput,
       },
+      {
+        driver: ProviderDriverKind.make("zcode"),
+        transcriptFile: new URL("./message_steering/zcode_transcript.ndjson", import.meta.url),
+        modelSelection: ZCODE_MODEL_SELECTION,
+        assertOutput: assertZcodeMessageSteeringOutput,
+      },
     ],
   },
   {
@@ -1869,6 +1905,12 @@ export const ORCHESTRATOR_REPLAY_FIXTURES: ReadonlyArray<OrchestratorReplayFixtu
         transcriptFile: new URL("./turn_interrupt/muse_transcript.ndjson", import.meta.url),
         modelSelection: MUSE_MODEL_SELECTION,
         assertOutput: assertMuseTurnInterruptOutput,
+      },
+      {
+        driver: ProviderDriverKind.make("zcode"),
+        transcriptFile: new URL("./turn_interrupt/zcode_transcript.ndjson", import.meta.url),
+        modelSelection: ZCODE_MODEL_SELECTION,
+        assertOutput: assertTurnInterruptOutput,
       },
     ],
   },

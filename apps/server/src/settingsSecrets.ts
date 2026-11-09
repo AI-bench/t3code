@@ -19,6 +19,7 @@ import { kiroClient } from "@t3tools/provider-kiro/client";
 import { museClient } from "@t3tools/provider-muse/client";
 import { openCodeClient } from "@t3tools/provider-opencode/client";
 import { piClient } from "@t3tools/provider-pi/client";
+import { zcodeClient } from "@t3tools/provider-zcode/client";
 import {
   readSecretFieldValues,
   SOURCE_CONTROL_HOST_SECRET_FIELDS,
@@ -40,6 +41,7 @@ const providerSecretFields = new Map([
     openCodeClient,
     piClient,
     acpRegistryClient,
+    zcodeClient,
   ].map(
     (definition) =>
       [definition.driverKind, secretSettingsFields(definition.settingsSchema)] as const,
